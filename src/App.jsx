@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from './layout/MainLayout.jsx';
 import routes from './routes.js';
+import ProtectedRoute from './authscreen/ProtectedRoute.jsx';
 
 // Auth screens
 import Login from './authscreen/login/index.jsx';
@@ -18,19 +19,21 @@ export default function App() {
         <Route path="/auth/otp" element={<Otp />} />
         <Route path="/auth/password-change" element={<PasswordChange />} />
 
-        {/* App routes with sidebar */}
-        <Route path="/" element={<MainLayout />}> 
-          {routes.flatMap((menu) => (
-            menu.children?.map((child) => (
-              <Route key={child.path} path={child.path} element={<child.component />} />
-            ))
-          ))}
-          {/* Default landing */}
-          <Route index element={<Navigate to="orders/orders" replace />} />
+        {/* App routes with sidebar - protected */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<MainLayout />}> 
+            {routes.flatMap((menu) => (
+              menu.children?.map((child) => (
+                <Route key={child.path} path={child.path} element={<child.component />} />
+              ))
+            ))}
+            {/* Default landing */}
+            <Route index element={<Navigate to="orders/orders" replace />} />
+          </Route>
         </Route>
 
         {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/auth/login" replace />} />
       </Routes>
     </BrowserRouter>
   );
